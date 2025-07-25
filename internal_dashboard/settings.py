@@ -29,7 +29,15 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ["*"]
+if DEBUG:
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = [
+        'secure-internal-dashboard-backend.onrender.com',
+        'secure-internal-dashboard-frontend.vercel.app',
+        'localhost',
+        '127.0.0.1'
+    ]
 
 
 # Application definition
@@ -63,9 +71,10 @@ MIDDLEWARE = [
 
 # Session settings
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
+SESSION_COOKIE_SECURE = not DEBUG  # True in production with HTTPS
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = None  # Set to 'Lax' in production
+SESSION_COOKIE_SAMESITE = 'None' if not DEBUG else None  # None for cross-origin
+SESSION_COOKIE_AGE = 3600  # 1 hour
 
 ROOT_URLCONF = 'internal_dashboard.urls'
 
@@ -197,13 +206,20 @@ LOGGING = {
 }
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True  # For development only, restrict in production
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ORIGIN_ALLOW_ALL = True
+else:
+    CORS_ALLOWED_ORIGINS = [
+        'https://secure-internal-dashboard-frontend.vercel.app',
+    ]
+    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ORIGIN_ALLOW_ALL = False
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 CORS_ALLOW_HEADERS = ['Content-Type', 'Authorization', 'X-Requested-With']
-# CORS_ALLOWED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:3000']
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
-CORS_ORIGIN_ALLOW_ALL = True  # For development only
 
 # JWT settings
 from datetime import timedelta
