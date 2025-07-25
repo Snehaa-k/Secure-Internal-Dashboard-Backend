@@ -16,7 +16,12 @@ class WebAuthnUtils:
     def __init__(self):
         self.rp_id = settings.PASSKEYS.get('RELYING_PARTY_ID', 'localhost')
         self.rp_name = settings.PASSKEYS.get('RELYING_PARTY_NAME', 'Internal Dashboard')
-        self.origin = f"http://{self.rp_id}:3000"
+        
+        # Determine origin based on environment
+        if self.rp_id == 'localhost':
+            self.origin = f"http://{self.rp_id}:3000"
+        else:
+            self.origin = f"https://{self.rp_id}"
     
     def _base64url_decode(self, data):
         """Decode base64url string to bytes with proper padding"""

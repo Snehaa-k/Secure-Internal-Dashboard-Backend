@@ -217,7 +217,7 @@ SIMPLE_JWT = {
 # WebAuthn settings - update RELYING_PARTY_ID for production
 PASSKEYS = {
     'RELYING_PARTY_ID': os.environ.get('RELYING_PARTY_ID', 'localhost'),
-    'RELYING_PARTY_NAME': 'Internal Dashboard',
+    'RELYING_PARTY_NAME': os.environ.get('RELYING_PARTY_NAME', 'Internal Dashboard'),
     'AUTHENTICATOR_ATTACHMENT': None,
     'USER_VERIFICATION': 'preferred',
 }
